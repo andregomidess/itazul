@@ -1,0 +1,27 @@
+@media (max-width:481px) {
+
+    .card{
+        border-radius: 1rem;
+        border: 1px solid #D8D8D8;
+        width: 20rem;
+        height: auto;
+    }
+    .bg{
+        background-image: url(../../../assets/Background.png);
+        width: 100vw;
+        height: 100vh;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .boxContent{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+}
