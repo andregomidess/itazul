@@ -13,6 +13,7 @@
     "@types/react-leaflet": "^3.0.0",
     "leaflet": "^1.9.4",
     "next": "14.0.1",
+    "primereact": "^10.0.9",
     "react": "^18",
     "react-dom": "^18",
     "react-leaflet": "^4.2.1",

@@ -1,4 +1,26 @@
 @media (max-width:481px) {
 
+    .timer{
+        z-index: 1;
+        width: 18.5rem;
+        height: 5.125rem;
+        position: absolute;
+        top: 12%;
+        left: 13%;
+        border-radius: .95rem;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--light);
+
+        h2{
+            font-weight: 700;
+            font-size: 2rem;
+            span{
+                color: var(--blue);
+            }
+        }
+    }
     
 }

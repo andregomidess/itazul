@@ -26,10 +26,10 @@
     }
 
     .roundedBtn{
+        z-index: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1111;
         position: absolute;
         top: 87%;
         left: 42%;
@@ -91,5 +91,7 @@
             margin: 0;
         }
     }
+
+
  
 }

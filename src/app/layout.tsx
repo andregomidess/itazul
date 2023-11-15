@@ -1,4 +1,5 @@
 import './globals.scss'
+import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
 
 export default function RootLayout({
   children,
@@ -7,8 +8,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
-
-      <body>{children}</body>
+      <PrimeReactProvider>
+        <body>{children}</body>
+      </PrimeReactProvider>
     </html>
   )
 }

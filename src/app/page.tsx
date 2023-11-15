@@ -9,6 +9,8 @@ import { useState } from "react";
 import Modal from "@/components/ui/Modal";
 import line from "../assets/line.svg";
 import Link from "next/link";
+import Timer from "@/components/ui/Timer";
+import ModalFinalization from "@/components/ui/ModalFinlization";
 
 const Map = dynamic(() => import("../components/ui/Map"), { ssr: false });
 
@@ -92,7 +94,8 @@ const ContentModal = ({ contentModalMain, contentModalConfirmation, contentModal
             <span className="info font-bold">Master card - Final 4567</span>
           </div>
           <div className="w-full">
-            <button className="btn-primary mb-3 w-full">Confirmar</button>
+            {/* <button className="btn-primary mb-3 w-full">Confirmar</button> */}
+            <ModalFinalization/>
           </div>
         </div>
       }
@@ -119,13 +122,15 @@ export default function Home() {
           </div>
         </div>
       </header>
+      {/* Timer */}
+      <Timer/>
       <div
-        onClick={() => {setIsOpenModal(!isOpenModal), setIsModalContentMain(true)}}
+        onClick={() => {setIsOpenModal(!isOpenModal), setIsModalContentFinalization(true)}}
         className={style.roundedBtn}
       >
         <Image src={plus} alt="Icone de marcar zona azul" />
       </div>
-
+      
       <div style={{ height: "89vh" }}>
         <Map />
       </div>
@@ -135,6 +140,7 @@ export default function Home() {
             <Image src={line} alt="Fechar modal" />
           </figure>
           <ContentModal contentModalMain={isModalContentMain} contentModalConfirmation={isModalContentConfirmation} contentModalFinalization={isModalContentFinalization} />
+          
         </Modal>
       )}
     </div>

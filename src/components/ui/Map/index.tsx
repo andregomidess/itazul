@@ -10,7 +10,7 @@ const ICON = icon({
   iconSize: [64, 64],
 })
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={18} style={{height: '100%', width: '100%'}}>
+    <MapContainer className="map" center={[51.505, -0.09]} zoom={18} style={{height: '100%', width: '100%'}}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
