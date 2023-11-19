@@ -23,7 +23,6 @@ const EditProfile = () => {
           />
       </figure>
       </div>
-
       <div className={style.headerText}>
         <button className={style.backButton}>{'<'}</button>
         <h3>Editar Perfil</h3>
