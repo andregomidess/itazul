@@ -1,0 +1,31 @@
+@media (max-width:481px) {
+
+    .box{
+        text-align: center;
+        padding: 0 1.25rem;
+        margin-bottom: 2.5rem;
+        
+        h2{
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        button{
+            width: 100%;
+        }
+    }
+
+    .fundo{
+        background-color: rgb(0,225,255);
+    }
+
+    .center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* Defina a altura como 100% da altura da viewport */
+      }
+      
+      
+
+}
