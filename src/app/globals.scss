@@ -73,3 +73,14 @@ button{
     
     border: 0;
 }
+
+.error-message{
+    color: rgb(223, 0, 0);
+    font-size: clamp(.8rem, .8vw, 1rem);
+    text-align: start;
+  }
+  
+  .error{
+    border: 1px solid rgb(223, 0, 0) !important;
+  }
+  

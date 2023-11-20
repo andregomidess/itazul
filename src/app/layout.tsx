@@ -1,5 +1,8 @@
 import './globals.scss'
-import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
+import { PrimeReactProvider } from 'primereact/api';
+//lib do toastfy
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function RootLayout({
   children,
@@ -9,6 +12,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <PrimeReactProvider>
+        <ToastContainer autoClose={3000}/>
         <body>{children}</body>
       </PrimeReactProvider>
     </html>

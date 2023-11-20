@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import style from './style.module.scss';
 import { Dialog } from 'primereact/dialog';
-import { Button } from "primereact/button";
 import icon from '../../../assets/finalization-icon.svg';
 import Image from "next/image";
 

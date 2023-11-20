@@ -1,20 +1,18 @@
 // ModalAddVehicle.js
+import { zodResolver } from '@hookform/resolvers/zod';
 import style from './style.module.scss'
 
 import React, { ReactNode } from 'react';
+import { useForm } from 'react-hook-form';
 
-interface ModalAddVehicleProps {
-  isOpen: boolean;
-  onClose: () => void;
-  children?: ReactNode; // Adicione a propriedade 'children' aqui
-}
 
-const ModalAddVehicle: React.FC<ModalAddVehicleProps> = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
+const ModalAddPay = () => {
+
+  
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay">
+      <div className="modal-content">
       <div className="modal">
       <div className={style.section}>
         <h3>Adicionar Meio de Pagamento</h3>
@@ -38,11 +36,10 @@ const ModalAddVehicle: React.FC<ModalAddVehicleProps> = ({ isOpen, onClose, chil
         <button type="button" className={`btn btn-primary btn-lg btn-block ${style.noBorder}`}>Adicionar Veículo</button>
       </div>
       <div className="modal-overlay"></div>
-        {children}
-        <button onClick={onClose}>Fechar</button>
+        <button>Fechar</button>
       </div>
     </div>
   );
 };
 
-export default ModalAddVehicle;
+export default ModalAddPay;
