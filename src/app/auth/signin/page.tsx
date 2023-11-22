@@ -57,7 +57,7 @@ const Signin = () => {
               <Link className={style.forgotPassword} href={'/auth/forgot-password'}>Esqueci minha senha</Link>
               <div className={style.buttonBox}>
                   <button type='submit' className='btn-primary mb-2'>Login</button>
-                  <button type='button' className='btn-secondary'>Registrar</button>
+                  <Link href={'/auth/signup'} className='btn-secondary'>Registrar</Link>
               </div>
             </form>
         </CardLogin>
