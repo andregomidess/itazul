@@ -15,6 +15,7 @@ import { compareObjects } from "@/utils/compare";
 import ModalAddVehicle from "@/components/ui/ModalAddVehicle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import AuthService from "@/app/services/authService";
 
 const createUserSchema = z.object({
   name: z.string().nonempty("O nome é obrigatório").max(50),
@@ -32,6 +33,7 @@ const createUserSchema = z.object({
 });
 
 const userService = new UserService();
+const authService = new AuthService();
 
 const EditProfile = () => {
 
@@ -61,6 +63,7 @@ const EditProfile = () => {
       toast.error('Erro ao atualizar usuário!');
     }
   };
+
 
   
 
@@ -113,7 +116,7 @@ const EditProfile = () => {
         </figure>
       </div>
       <div className={style.headerText}>
-        <Link href={'/'} className={style.backButton}>voltar</Link>
+        <Link href={localStorage.getItem('url')!} className={style.backButton}>voltar</Link>
         <h3>Editar Perfil</h3>
       </div>
 
@@ -172,6 +175,14 @@ const EditProfile = () => {
             className={`btn btn-primary btn-lg btn-block ${style.noBorder}`}
           >
             Editar Perfil
+          </button>
+
+          <button
+            type="submit"
+            className={`btn btn-primary btn-lg btn-block ${style.noBorder}`}
+            onClick={() => authService.logout()}
+          >
+            Logout
           </button>
         </div>
       </form>

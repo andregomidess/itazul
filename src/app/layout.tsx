@@ -13,12 +13,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const router = useRouter();
-  
-  // useEffect(() => {
-  //   router.push("/auth/signin");
 
-  // }, []);
   return (
     
     <html lang="pt-br">

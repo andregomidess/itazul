@@ -15,6 +15,8 @@ import ModalFinalization from "@/components/ui/ModalFinlization";
 import UserService from "@/app/services/userService";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { format } from 'date-fns';
+
 
 const Map = dynamic(() => import("../../../components/ui/Map"), { ssr: false });
 
@@ -32,10 +34,22 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
 
   useEffect(() => {
   
-    
+    setParkingSession(JSON.parse(localStorage.getItem('parkingSession')!))
     if(localStorage.getItem('parkingSession')) {
+      console.log('aq')
       setContentModalMain(false);
       SetContentModalFinalization(true);
+      setParkingSession(JSON.parse(localStorage.getItem('parkingSession')!))
+      setMethodPaymentSelected(localStorage.getItem('payment'))
+      setVehicleSelected(JSON.parse(localStorage.getItem('vehicle')!))
+    }
+
+    if(localStorage.getItem('vehicle') && localStorage.getItem('payment') && !localStorage.getItem('parkingSession')){
+      setContentModalMain(false);
+      SetContentModalConfirmation(true);
+      setMethodPaymentSelected(localStorage.getItem('payment'))
+      setVehicleSelected(JSON.parse(localStorage.getItem('vehicle')!))
+      console.log(JSON.parse(localStorage.getItem('vehicle')!));
     }
     const getVehicle = async () => {
       const id = localStorage.getItem('id');
@@ -45,6 +59,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
           if(res) {
             console.log(res);
             setVehicles(res);
+            
           }
         }
       } catch (e){
@@ -56,12 +71,14 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
 
   const handleVehicleChange = (event: any) => {
     const vehicleSel = vehicles.filter((item: any) => item.id === event.target.value);
-    console.log(vehicleSel);
-    setVehicleSelected(vehicleSel);
+    console.log(vehicleSel[0]);
+    setVehicleSelected(vehicleSel[0]);
+    localStorage.setItem('vehicle', JSON.stringify(vehicleSel[0]));
   };
 
   const handleMethodPayment = (event: any) => {
     setMethodPaymentSelected(event.target.value);
+    localStorage.setItem('payment', event.target.value);
     console.log(event.target.value);
   };
 
@@ -84,7 +101,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
     const payload = {
       entry_time: currentTime,
       street_id: streetData.id,
-      vehicle_id: vehicleSelected[0].id
+      vehicle_id: vehicleSelected.id
     }
 
     try {
@@ -92,6 +109,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
       if(res){
         console.log(res);
         toast.success('Parking session criado.');
+        setContentModalMain(false);
         SetContentModalConfirmation(false);
         SetContentModalFinalization(true);
         setParkingSession(res);
@@ -103,6 +121,31 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
     }
   }
 
+  const finishParkingSession = async () => {
+
+    const payload = {
+      //parking_session_id: parkingSession.id,
+      time: currentTime
+    }
+
+    try {
+      const res = await userService.finishParkingSession(parkingSession.id, payload);
+      if(res){
+        console.log(res);
+        console.log(res);
+        toast.success('Parking session Finalizado.');
+        setContentModalMain(true);
+        SetContentModalConfirmation(false);
+        SetContentModalFinalization(false);
+      } 
+      }catch (err) {
+        console.log(err);
+        toast.error('Erro ao finalizar uma parking session.');
+    }
+  }
+
+
+
   return (
     <>
     {/* Renderiza Modal Inicial */}
@@ -111,7 +154,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
         <h2 >{currentTime.toLocaleTimeString().substring(0, 5) + 'h'}</h2>
         <div>
           <div className="mb-4 flex items-center">
-            <select className="input" onChange={handleVehicleChange} value={vehicleSelected ? vehicleSelected[0].id : null}>
+            <select className="input" onChange={handleVehicleChange} value={vehicleSelected ? vehicleSelected.id : null}>
               <option value={null} selected disabled>
                 Selecionar Veículo
               </option>
@@ -149,7 +192,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
       }
 
       {/* Renderiza Modal de confirmação */}
-      {contentModalConfirmation && 
+      {contentModalConfirmation && vehicleSelected && 
         <div className={style.modalConfirmation}>
           <div className={style.boxHour}>
             <h2>{currentTime.toLocaleTimeString().substring(0, 5) + 'h'}</h2>
@@ -160,7 +203,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
           </div>
           <div className={style.boxVehicle}>
             <span className={style.label}>Veículo Selecionado:</span>
-            <span className="font-bold">{vehicleSelected[0].manufacturer + ' ' + vehicleSelected[0].model} <span className="font-normal">{'(' + vehicleSelected[0].color + ')'}</span>{' - ' + vehicleSelected[0].plate}</span>
+            <span className="font-bold">{vehicleSelected.manufacturer + ' ' + vehicleSelected.model} <span className="font-normal">{'(' + vehicleSelected.color + ')'}</span>{' - ' + vehicleSelected.plate}</span>
           </div>
           <div className={style.boxPayment}>
             <span className={style.label}>Meio de Pagamento:</span>
@@ -174,23 +217,23 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
       }
 
       {/* Renderiza o modal de pagamento */}
-      {contentModalFinalization && 
+      {contentModalFinalization && parkingSession && 
         <div className={style.modalFinalization}>
           <div className={style.boxValueHour}>
-            <h2>{parkingSession[0].entry_time}</h2>
-            <span>Valor a ser cobrado: <span className="font-bold">{'R$' + streetData.hour_price + 'por hora'}</span></span>
+            <h2>{format(new Date(parkingSession.entry_time), 'HH:mm') + ' - ' + currentTime.toLocaleTimeString().substring(0, 5) + 'h'}</h2>
+            <span>Valor a ser cobrado: <span className="font-bold">{'R$' + streetData.hour_price + ' POR HORA'}</span></span>
           </div>
           <div className={style.boxVehicle}>
             <span className={style.label}>Veículo Selecionado:</span>
-            <span className="font-bold">{vehicleSelected[0].manufacturer + ' ' + vehicleSelected[0].model} <span className="font-normal">{'(' + vehicleSelected[0].color + ')'}</span>{' - ' + vehicleSelected[0].plate}</span>
+            <span className="font-bold">{vehicleSelected.manufacturer + ' ' + vehicleSelected.model} <span className="font-normal">{'(' + vehicleSelected.color + ')'}</span>{' - ' + vehicleSelected.plate}</span>
           </div>
           <div className={style.boxPayment}>
             <span className={style.label}>Meio de Pagamento:</span>
             <span className="info font-bold">{methodPaymentSelected}</span>
           </div>
           <div className="w-full">
-            {/* <button className="btn-primary mb-3 w-full">Confirmar</button> */}
-            <ModalFinalization/>
+            <button className="btn-primary mb-3 w-full" onClick={() => finishParkingSession()}>Finalizar</button>
+            {/* <ModalFinalization/> */}
           </div>
         </div>
       }
@@ -206,7 +249,7 @@ interface HomeProps{
 
 export default function Home({params}: HomeProps) {
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [isModalContentMain, setIsModalContentMain] = useState(false);
+  const [isModalContentMain, setIsModalContentMain] = useState(true);
   const [isModalContentConfirmation, setIsModalContentConfirmation] = useState(false);
   const [isModalContentFinalization, setIsModalContentFinalization] = useState(false);
 
@@ -228,13 +271,11 @@ export default function Home({params}: HomeProps) {
           if (res) setStreet(res);
           console.log(res);
         }catch(e){
-          toast.error('Erro ao puxar dadso da rua')
+          //toast.error('Erro ao puxar dadso da rua')
+          console.error(e);
         }
       }
     }
-
-    
-
     getStreetById();
   }, [])
 
@@ -247,14 +288,16 @@ export default function Home({params}: HomeProps) {
             <Image src={logo} alt="logo da itaZul" />
           </div>
           <div className="menu">
-            <Image src={menu} alt="logo da itaZul" />
+            <Link href={'/auth/edit-profile'}>
+              <Image src={menu} alt="menu da itaZul" />
+            </Link>
           </div>
         </div>
       </header>
       {/* Timer */}
-      <Timer/>
+      {/* <Timer/> */}
       <div
-        onClick={() => {setIsOpenModal(!isOpenModal), setIsModalContentMain(true)}}
+        onClick={() => {setIsOpenModal(!isOpenModal)}}
         className={style.roundedBtn}
       >
         <Image src={plus} alt="Icone de marcar zona azul" />

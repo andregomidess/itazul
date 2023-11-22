@@ -23,6 +23,9 @@ export default class AuthService {
         localStorage.removeItem('name');
         localStorage.removeItem('id');
         localStorage.removeItem('access_token');
+        localStorage.removeItem('vehicle');
+        localStorage.removeItem('parkingSession');
+        localStorage.removeItem('payment');
     }
 
 }

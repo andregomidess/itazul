@@ -78,7 +78,7 @@ export default class UserService {
     }
 
     async finishParkingSession(parkingSessionId: string, payload: any){
-        const {data} = await this.axios.patch(`/parking_sessions/${parkingSessionId}`, payload);
+        const {data} = await this.axios.patch(`/parking_sessions/${parkingSessionId}/finishParkingSession`, payload);
         console.log(data);
         if (data) return data;
         return false;
