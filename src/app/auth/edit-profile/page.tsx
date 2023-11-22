@@ -14,6 +14,7 @@ import { use, useEffect, useState } from "react";
 import { compareObjects } from "@/utils/compare";
 import ModalAddVehicle from "@/components/ui/ModalAddVehicle";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const createUserSchema = z.object({
   name: z.string().nonempty("O nome é obrigatório").max(50),
@@ -42,6 +43,7 @@ const EditProfile = () => {
   } = useForm({
     resolver: zodResolver(createUserSchema),
   });
+  const router = useRouter();
 
   const [user, setUser] = useState();
   const [vehicles, setVehicles] = useState([]);
@@ -63,6 +65,10 @@ const EditProfile = () => {
   
 
   useEffect(() => {
+    if (!localStorage.getItem('access_token')) {
+      router.push("/auth/signin");
+    }
+    
     const getUserById = async () => {
       const id = localStorage.getItem('id');
       try{

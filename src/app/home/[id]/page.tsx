@@ -13,23 +13,30 @@ import Link from "next/link";
 import Timer from "@/components/ui/Timer";
 import ModalFinalization from "@/components/ui/ModalFinlization";
 import UserService from "@/app/services/userService";
-import { log } from "console";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const Map = dynamic(() => import("../../../components/ui/Map"), { ssr: false });
 
 const userService = new UserService();
 
-const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfirmation, SetContentModalConfirmation,  contentModalFinalization, SetContentModalFinalization  } : {contentModalMain : boolean, contentModalConfirmation: boolean, contentModalFinalization: boolean, setContentModalMain: any, SetContentModalConfirmation: any, SetContentModalFinalization: any}) => {
+const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfirmation, SetContentModalConfirmation,  contentModalFinalization, SetContentModalFinalization, streetData  } : {contentModalMain : boolean, contentModalConfirmation: boolean, contentModalFinalization: boolean, setContentModalMain: any, SetContentModalConfirmation: any, SetContentModalFinalization: any, streetData: any}) => {
 
   const [vehicles, setVehicles] = useState<any>(null);
   const [vehicleSelected, setVehicleSelected] = useState<any>(null);
   const [methodPaymentSelected, setMethodPaymentSelected] = useState<any>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [parkingSession, setParkingSession] = useState<any>(null);
   const router = useRouter();
 
 
   useEffect(() => {
+  
+    
+    if(localStorage.getItem('parkingSession')) {
+      setContentModalMain(false);
+      SetContentModalFinalization(true);
+    }
     const getVehicle = async () => {
       const id = localStorage.getItem('id');
       try{
@@ -65,15 +72,46 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
     }
   }
 
+  const backToconfirmMainModal = () => {
+    if(methodPaymentSelected && vehicleSelected) {
+      setContentModalMain(true);
+      SetContentModalConfirmation(false);
+    }
+  }
+
+  const sendParkingSession = async () => {
+
+    const payload = {
+      entry_time: currentTime,
+      street_id: streetData.id,
+      vehicle_id: vehicleSelected[0].id
+    }
+
+    try {
+      const res = await userService.parkingSession(payload);
+      if(res){
+        console.log(res);
+        toast.success('Parking session criado.');
+        SetContentModalConfirmation(false);
+        SetContentModalFinalization(true);
+        setParkingSession(res);
+        localStorage.setItem('parkingSession', JSON.stringify(res));
+      } 
+      }catch (err) {
+        console.log(err);
+        toast.error('Erro ao criar uma parking session.');
+    }
+  }
+
   return (
     <>
     {/* Renderiza Modal Inicial */}
       {contentModalMain && 
       <>
-        <h2>{currentTime.toLocaleTimeString()}</h2>
+        <h2 >{currentTime.toLocaleTimeString().substring(0, 5) + 'h'}</h2>
         <div>
           <div className="mb-4 flex items-center">
-            <select className="input" onChange={handleVehicleChange} value={vehicleSelected ? vehicleSelected.id : null}>
+            <select className="input" onChange={handleVehicleChange} value={vehicleSelected ? vehicleSelected[0].id : null}>
               <option value={null} selected disabled>
                 Selecionar Veículo
               </option>
@@ -91,7 +129,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
             </div>
           </div>
           <div className="flex items-center">
-            <select className="input" onChange={handleMethodPayment}>
+            <select className="input" onChange={handleMethodPayment} value={methodPaymentSelected ? methodPaymentSelected : null}>
               <option value={null} selected disabled>Selecionar Meio de Pagamento</option>
               <option value={'PIX'}>PIX</option>
               <option value={'debito'}>Debito</option>
@@ -114,23 +152,23 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
       {contentModalConfirmation && 
         <div className={style.modalConfirmation}>
           <div className={style.boxHour}>
-            <h2>12:20h</h2>
+            <h2>{currentTime.toLocaleTimeString().substring(0, 5) + 'h'}</h2>
             <div className={style.hourlyRate}>
               <span>Valor Hora:</span>
-              <span>R$3,00</span>
+              <span>{'R$' + streetData.hour_price}</span>
             </div>
           </div>
           <div className={style.boxVehicle}>
             <span className={style.label}>Veículo Selecionado:</span>
-            <span className="font-bold">Toyota Étios <span className="font-normal">(prata)</span> - PWN5746</span>
+            <span className="font-bold">{vehicleSelected[0].manufacturer + ' ' + vehicleSelected[0].model} <span className="font-normal">{'(' + vehicleSelected[0].color + ')'}</span>{' - ' + vehicleSelected[0].plate}</span>
           </div>
           <div className={style.boxPayment}>
             <span className={style.label}>Meio de Pagamento:</span>
-            <span className="info font-bold">Master card - Final 4567</span>
+            <span className="info font-bold">{methodPaymentSelected}</span>
           </div>
           <div className="flex flex-col">
-            <button className="btn-primary mb-3">Confirmar</button>
-            <button className="btn-secondary">Voltar</button>
+            <button className="btn-primary mb-3" onClick={() => sendParkingSession()}>Confirmar</button>
+            <button className="btn-secondary" onClick={() => backToconfirmMainModal()}>Voltar</button>
           </div>
         </div>
       }
@@ -139,16 +177,16 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
       {contentModalFinalization && 
         <div className={style.modalFinalization}>
           <div className={style.boxValueHour}>
-            <h2>12:20h - 13:26h</h2>
-            <span>Valor a ser cobrado: <span className="font-bold">R$3,00</span></span>
+            <h2>{parkingSession[0].entry_time}</h2>
+            <span>Valor a ser cobrado: <span className="font-bold">{'R$' + streetData.hour_price + 'por hora'}</span></span>
           </div>
           <div className={style.boxVehicle}>
             <span className={style.label}>Veículo Selecionado:</span>
-            <span className="font-bold">Toyota Étios <span className="font-normal">(prata)</span> - PWN5746</span>
+            <span className="font-bold">{vehicleSelected[0].manufacturer + ' ' + vehicleSelected[0].model} <span className="font-normal">{'(' + vehicleSelected[0].color + ')'}</span>{' - ' + vehicleSelected[0].plate}</span>
           </div>
           <div className={style.boxPayment}>
             <span className={style.label}>Meio de Pagamento:</span>
-            <span className="info font-bold">Master card - Final 4567</span>
+            <span className="info font-bold">{methodPaymentSelected}</span>
           </div>
           <div className="w-full">
             {/* <button className="btn-primary mb-3 w-full">Confirmar</button> */}
@@ -173,8 +211,15 @@ export default function Home({params}: HomeProps) {
   const [isModalContentFinalization, setIsModalContentFinalization] = useState(false);
 
   const [street, setStreet] = useState<any>(null);
+  const router = useRouter();
+  const pathname = usePathname()
 
   useEffect(() => {
+    if (!localStorage.getItem('access_token')) {
+      console.log(pathname);
+      localStorage.setItem('url', pathname);
+      router.push("/auth/signin");
+    }
 
     const getStreetById = async () => {
       if (params.id){
@@ -223,7 +268,7 @@ export default function Home({params}: HomeProps) {
           <figure onClick={() => setIsOpenModal(!isOpenModal)}>
             <Image src={line} alt="Fechar modal" />
           </figure>
-          <ContentModal contentModalMain={isModalContentMain} setContentModalMain={setIsModalContentMain}  contentModalConfirmation={isModalContentConfirmation} SetContentModalConfirmation={setIsModalContentConfirmation} contentModalFinalization={isModalContentFinalization} SetContentModalFinalization={setIsModalContentFinalization} />
+          <ContentModal contentModalMain={isModalContentMain} setContentModalMain={setIsModalContentMain}  contentModalConfirmation={isModalContentConfirmation} SetContentModalConfirmation={setIsModalContentConfirmation} contentModalFinalization={isModalContentFinalization} SetContentModalFinalization={setIsModalContentFinalization} streetData={street} />
           
         </Modal>
       )}

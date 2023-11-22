@@ -70,5 +70,18 @@ export default class UserService {
         return false;
     }
 
+    async parkingSession(payload: any){
+        const {data} = await this.axios.post(`/parking_sessions/`, payload);
+        console.log(data);
+        if (data) return data;
+        return false;
+    }
+
+    async finishParkingSession(parkingSessionId: string, payload: any){
+        const {data} = await this.axios.patch(`/parking_sessions/${parkingSessionId}`, payload);
+        console.log(data);
+        if (data) return data;
+        return false;
+    }
 
 }

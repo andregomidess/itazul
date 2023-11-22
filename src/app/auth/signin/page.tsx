@@ -38,7 +38,8 @@ const Signin = () => {
       console.log(res);
       if(res) {
         toast.success('Usuário Logado');
-        router.push('/')
+        const url: any = localStorage.getItem('url');
+        router.push(url)
       }
     } catch (e) {
       console.error(e);

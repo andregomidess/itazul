@@ -7,6 +7,7 @@ import UserService from "@/app/services/userService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const createUserSchema = z.object({
   name: z.string().nonempty("O nome é obrigatório").max(50),
@@ -41,6 +42,8 @@ const Signup = () => {
     resolver: zodResolver(createUserSchema),
   });
 
+  const router = useRouter();
+
   const createUpdateUser = async (data: any) => {
     delete data.confirmPassword;
     console.log(data);
@@ -48,6 +51,7 @@ const Signup = () => {
       const res = await userService.createUser(data);
       console.log(res);
       toast.success('Usuário criado com sucesso!');
+      router.push("/auth/signin");
     } catch (e) {
       console.error(e);
       toast.error('erro ao criar usuário!');
