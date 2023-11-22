@@ -63,5 +63,12 @@ export default class UserService {
         return false;
     }
 
+    async getStreet(streetId: string){
+        const {data} = await this.axios.get(`/streets/${streetId}`);
+        console.log(data);
+        if (data) return data;
+        return false;
+    }
+
 
 }
