@@ -124,7 +124,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
   const finishParkingSession = async () => {
 
     const payload = {
-      //parking_session_id: parkingSession.id,
+      parking_session_id: parkingSession.id,
       time: currentTime
     }
 
@@ -133,7 +133,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
       if(res){
         console.log(res);
         console.log(res);
-        toast.success('Parking session Finalizado.');
+        toast.success(`Você tem: ${res.points_gamefication} pontos acumulados!!`);
         setContentModalMain(true);
         SetContentModalConfirmation(false);
         SetContentModalFinalization(false);
