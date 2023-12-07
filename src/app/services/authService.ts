@@ -13,6 +13,7 @@ export default class AuthService {
             localStorage.setItem('name', data?.name);
             localStorage.setItem('id', data?.id);
             localStorage.setItem('access_token', data?.access_token);
+            localStorage.setItem('role', data?.role.name);
             console.log(data);
             return true;
         }

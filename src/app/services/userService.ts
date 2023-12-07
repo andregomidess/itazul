@@ -84,4 +84,11 @@ export default class UserService {
         return false;
     }
 
+    async getParkingSessionByStret(streetId: string){
+        const {data} = await this.axios.get(`/parking_sessions/7fcae582-5fe6-4faa-8045-e1455a7e9209`);
+        console.log(data);
+        if (data) return data;
+        return false;
+    }
+
 }

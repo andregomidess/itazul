@@ -38,8 +38,14 @@ const Signin = () => {
       console.log(res);
       if(res) {
         toast.success('Usuário Logado');
-        const url: any = localStorage.getItem('url');
-        router.push(url)
+        const role = localStorage.getItem('role');
+        if (role === 'User'){
+          const url: any = localStorage.getItem('url');
+          router.push(url)
+        }else{
+          router.push('/fiscal')
+        }
+        
       }
     } catch (e) {
       console.error(e);

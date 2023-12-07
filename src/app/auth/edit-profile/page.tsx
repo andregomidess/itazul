@@ -65,7 +65,6 @@ const EditProfile = () => {
   };
 
 
-  
 
   useEffect(() => {
     if (!localStorage.getItem('access_token')) {
@@ -103,7 +102,7 @@ const EditProfile = () => {
     }
     getVehicle();
     getUserById();
-  }, [vehicles])
+  }, [])
 
   return (
     <div className={style.container}>
@@ -178,7 +177,7 @@ const EditProfile = () => {
           </button>
 
           <button
-            type="submit"
+            type="button"
             className={`btn btn-primary btn-lg btn-block ${style.noBorder}`}
             onClick={() => authService.logout()}
           >

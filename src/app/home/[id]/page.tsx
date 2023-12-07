@@ -128,12 +128,16 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
       time: currentTime
     }
 
+    console.log(payload);
+
     try {
       const res = await userService.finishParkingSession(parkingSession.id, payload);
       if(res){
         console.log(res);
-        console.log(res);
         toast.success(`Você tem: ${res.points_gamefication} pontos acumulados!!`);
+        localStorage.removeItem('vehicle');
+        localStorage.removeItem('payment');
+        localStorage.removeItem('parkingSession');
         setContentModalMain(true);
         SetContentModalConfirmation(false);
         SetContentModalFinalization(false);
@@ -220,7 +224,7 @@ const ContentModal = ({ contentModalMain, setContentModalMain, contentModalConfi
       {contentModalFinalization && parkingSession && 
         <div className={style.modalFinalization}>
           <div className={style.boxValueHour}>
-            <h2>{format(new Date(parkingSession.entry_time), 'HH:mm') + ' - ' + currentTime.toLocaleTimeString().substring(0, 5) + 'h'}</h2>
+            <h2>{format(new Date(parkingSession.entry_time), 'HH:mm') + 'h' + ' - ' + currentTime.toLocaleTimeString().substring(0, 5) + 'h'}</h2>
             <span>Valor a ser cobrado: <span className="font-bold">{'R$' + streetData.hour_price + ' POR HORA'}</span></span>
           </div>
           <div className={style.boxVehicle}>
